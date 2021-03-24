@@ -21,7 +21,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "\\AndPHP\\ApiDocs\\ApiDocsServiceProvider"
+                "\\AndPHP\\ApiDocs\\PostmanToMarkdownServiceProvider"
             ]
         }
     }
