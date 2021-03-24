@@ -1,5 +1,5 @@
 {
-    "name": "andphp/docs",
+    "name": "andphp/postman_to_markdown",
     "description": "dev",
     "type": "library",
     "require": {
