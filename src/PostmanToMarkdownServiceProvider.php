@@ -25,7 +25,7 @@ class PostmanToMarkdownServiceProvider extends ServiceProvide
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/config/docs.php' => config_path('docs.php'),
+            __DIR__.'/config/postman.php' => config_path('postman.php'),
         ]);
     }
 }
