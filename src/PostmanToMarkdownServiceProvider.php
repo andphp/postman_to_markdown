@@ -5,7 +5,7 @@ namespace AndPHP\Postman;
 
 use Illuminate\Support\ServiceProvider;
 
-class PostmanToMarkdownServiceProvider extends ServiceProvide
+class PostmanToMarkdownServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
