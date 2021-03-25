@@ -437,7 +437,7 @@ class PostmanToMarkdown
 
     public function echoUrlName($path)
     {
-        echo 'urlname: ' . $path . PHP_EOL;
+        echo 'url_name: ' . $path . PHP_EOL;
         echo 'sticky: 1' . PHP_EOL;
     }
 
