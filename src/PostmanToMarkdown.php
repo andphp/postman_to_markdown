@@ -307,7 +307,7 @@ class PostmanToMarkdown
             die($intput_file . ' is not a json file.');
         }
 
-        $this->categories[] =  $data['info']['name'] ;
+        $this->categories[] = $data['info']['name'];
 
         $this->echoItem($data['item'], $output_file);
 
@@ -317,10 +317,11 @@ class PostmanToMarkdown
     {
 
         foreach ($item as $key => $value) {
+
             // 多级目录递归
             if (isset($value['item'])) {
-                $this->categories[] = $value['name'] ;
-                return $this->echoItem($value['item'], $output_file);
+                $this->categories[] = $value['name'];
+                $this->echoItem($value['item'], $output_file);
             } else {
                 # 跳过copy的
                 if (strpos($value['name'], 'Copy')) {
@@ -341,7 +342,7 @@ class PostmanToMarkdown
                 ### 配置
                 # 输出title
                 $this->echoTitle($value['name']);
-                $this->echoUrlName(implode('/',$path));
+                $this->echoUrlName(implode('/', $path));
                 # 输出分组
                 $this->echoCategories($this->categories);
 
@@ -362,8 +363,10 @@ class PostmanToMarkdown
                 if (!empty($value['request']['header'])) {
                     echo $this->table($value['request']['header'], 'header');
                 }
+                if (isset($value['request']['body']) && isset($value['request']['body']['mode'])) {
+                    echo $this->htag(3, "请求参数：【" . $value['request']['body']['mode'] . "】");
+                }
 
-                echo $this->htag(3, "请求参数：【" . $value['request']['body']['mode']. "】");
                 if (isset($value['request']['body']['formdata']) && !empty($value['request']['body']['formdata'])) {
                     echo $this->table($value['request']['body']['formdata'], 'params');
                 }
@@ -371,7 +374,14 @@ class PostmanToMarkdown
                     echo $this->table($value['request']['body']['xwwwformurlencoded'], 'params');
                 }
                 if (isset($value['request']['body']['raw']) && !empty($value['request']['body']['raw'])) {
-                    echo $this->table(json_decode($value['request']['body']['raw']), 'params');
+                    $rawParams = json_decode($value['request']['body']['raw'], true);
+                    $rawArray = array();
+                    foreach ($rawParams as $rawParamKey => $rawParamValue) {
+                        $rawArrayItem['key'] = $rawParamKey;
+                        $rawArrayItem['value'] = $rawParamValue;
+                        $rawArray[] = $rawArrayItem;
+                    }
+                    echo $this->table($rawArray, 'params');
                 }
 
 
@@ -432,20 +442,22 @@ class PostmanToMarkdown
     public function echoTitle($title)
     {
         echo '---' . PHP_EOL;
-        echo 'title: ' . $title. PHP_EOL;
+        echo 'title: ' . $title . PHP_EOL;
     }
 
     public function echoUrlName($path)
     {
         echo 'url_name: ' . $path . PHP_EOL;
         echo 'sticky: 1' . PHP_EOL;
+        echo 'cover: false' . PHP_EOL;
+        echo 'date: ' . now()->toDateTimeString() . PHP_EOL;
     }
 
     public function echoCategories($categories)
     {
-        echo 'categories: '  . PHP_EOL;
-        foreach ($categories as $item){
-            echo '- '.$item  . PHP_EOL;
+        echo 'categories: ' . PHP_EOL;
+        foreach ($categories as $item) {
+            echo '- ' . $item . PHP_EOL;
         }
         echo '---' . PHP_EOL . PHP_EOL;
     }
