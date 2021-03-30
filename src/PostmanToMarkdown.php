@@ -73,6 +73,9 @@ class PostmanToMarkdown
      */
     protected $categories = array();
 
+    protected $urlPath;
+    protected $fileConfig;
+
 
     /**
      * 给数组降维
@@ -238,6 +241,8 @@ class PostmanToMarkdown
                 # 截取描述
                 if (isset($value['description']) && !empty($value['description']) && mb_strlen($value['description']) > self::MAX_SHOW) {
                     $value['description'] = substr($value['description'], 0, self::MAX_SHOW) . '....';
+                } else {
+                    $value['description'] = $this->descriptionEnum($value['key']);
                 }
                 if (!isset($value['value'])) {
                     $value['value'] = '';
@@ -280,8 +285,28 @@ class PostmanToMarkdown
      */
     public function descriptionEnum($key = '')
     {
-        $enums = config('postman');
-        return $enums[$key] ?? '';
+        // 默认全局配置
+        $descs = config('postman');
+        $configPath = app_path() . '/ApiDocs/ParamsDesc/' . $this->urlPath . '.php';
+        if (is_file($configPath)) {
+            $fileConfig = $this->getFileConfig($configPath);
+            $configParams = array_merge($descs, $fileConfig);
+        } else {
+            $configParams = $descs;
+        }
+
+        return $configParams[$key] ?? '';
+    }
+
+
+    protected function getFileConfig($configPath)
+    {
+        $included = include_once($configPath);
+        if ($included === true) {
+            return $this->fileConfig;
+        }
+        $this->fileConfig = $included;
+        return $this->fileConfig;
     }
 
     /**
@@ -336,6 +361,7 @@ class PostmanToMarkdown
                 }
                 $output_path = $output_file;
                 # 创建文件夹和文件
+                $this->urlPath = implode('/', $value['request']['url']['path']);
                 $path = $value['request']['url']['path'];
                 $pathCount = count($path);
                 for ($p = 0; $p < $pathCount - 1; $p++) {
@@ -444,7 +470,7 @@ class PostmanToMarkdown
 
                         $paramsKeys = $this->getResponseParamsKeys(json_decode($response_body, true));
 
-                        echo $this->echoParamsDesc(implode('/', $value['request']['url']['path']), $paramsKeys);
+                        echo $this->echoParamsDesc($this->urlPath, $paramsKeys);
                         echo $this->htag(5, 'Response:');
                         echo $this->codeBlock($response_body, 'json');
                     }
@@ -510,7 +536,7 @@ class PostmanToMarkdown
         $descs = config('postman');
         $configPath = app_path() . '/ApiDocs/ParamsDesc/' . $path . '.php';
         if (is_file($configPath)) {
-            $fileConfig = include_once($configPath);
+            $fileConfig = $this->getFileConfig($configPath);
             $configParams = array_merge($descs, $fileConfig);
         } else {
             $configParams = $descs;
