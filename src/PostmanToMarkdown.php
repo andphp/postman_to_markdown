@@ -550,6 +550,7 @@ class PostmanToMarkdown
         }
         $times = ceil(count($new_desc) / 4);
         $str = str_repeat('|%s|%s|%s|%s|' . PHP_EOL, $times);
+        sort($new_desc);
         $new_desc = array_pad($new_desc, 4 * $times, ' ');
         // var_dump($new_desc);
         $descs = vsprintf($str, $new_desc);
