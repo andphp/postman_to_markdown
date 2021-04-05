@@ -20,9 +20,9 @@
     },
     "extra": {
         "laravel": {
-            "providers": [
-                "\\AndPHP\\Postman\\PostmanToMarkdownServiceProvider"
-            ]
-        }
+        "providers": [
+          "\\AndPHP\\Postman\\PostmanToMarkdownServiceProvider"
+        ]
+      }
     }
 }

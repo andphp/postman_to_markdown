@@ -542,15 +542,16 @@ class PostmanToMarkdown
             $configParams = $descs;
         }
         $new_desc = array();
-        foreach ($paramsKeys as $value) {
-            if (!in_array($value, $new_desc)) {
-                $new_desc[] = $value;
-                $new_desc[] = array_key_exists($value, $configParams) ? $configParams[$value] : "";
-            }
+        $arrKeys = array_unique($paramsKeys);
+        sort($arrKeys);
+
+        foreach ($arrKeys as $value) {
+            $new_desc[] = $value;
+            $new_desc[] = array_key_exists($value, $configParams) ? $configParams[$value] : "";
         }
         $times = ceil(count($new_desc) / 4);
         $str = str_repeat('|%s|%s|%s|%s|' . PHP_EOL, $times);
-        sort($new_desc);
+
         $new_desc = array_pad($new_desc, 4 * $times, ' ');
         // var_dump($new_desc);
         $descs = vsprintf($str, $new_desc);
